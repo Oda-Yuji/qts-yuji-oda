@@ -3,8 +3,6 @@ const mongoose = require('mongoose')
 const port = 3000
 const app = express()
 
-const Person = require('./models/Person')
-
 app.use(
     express.urlencoded({
         extended: true,
