@@ -1,7 +1,12 @@
 const express = require('express')
 const mongoose = require('mongoose')
-const port = 3000
 const app = express()
+
+const Person = mongoose.model('Person', {
+  name: String,
+  salary: Number,
+  approved: Boolean,
+})
 
 app.use(
     express.urlencoded({
@@ -25,7 +30,7 @@ app.post('/person', async (req, res) => {
 
     res.status(201).json({ message: 'Pessoa inserida no sistema com sucesso' })
   } catch (error) {
-    res.status(500).json({ erro: error })
+    res.status(500).json({ erro: error.message })
   }
 })
 
@@ -35,7 +40,7 @@ app.get('/person', async (req, res) => {
 
     res.status(200).json(people)
   } catch (error) {
-    res.status(500).json({ erro: error })
+    res.status(500).json({ erro: error.message })
   }
 })
 
@@ -52,7 +57,7 @@ app.get('/person/:id', async (req, res) => {
 
     res.status(200).json(person)
   } catch (error) {
-    res.status(500).json({ erro: error })
+    res.status(500).json({ erro: error.message })
   }
 })
 
@@ -77,7 +82,7 @@ app.patch('/person/:id', async (req, res) => {
 
     res.status(200).json(person)
   } catch (error) {
-    res.status(500).json({ erro: error })
+    res.status(500).json({ erro: error.mesage })
   }
 })
 
@@ -96,7 +101,7 @@ app.delete('/person/:id', async (req, res) => {
 
     res.status(200).json({ message: 'Usuário removido com sucesso' })
   } catch (error) {
-    res.status(500).json({ erro: error })
+    res.status(500).json({ erro: error.message })
   }
 })
 
