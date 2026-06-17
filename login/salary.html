@@ -11,10 +11,11 @@
 rel='stylesheet'> 
 </head> 
  
-<body> 
+<body>
+  <img class="aura" src="img/aura-monster2.gif">
   <div class="container"> 
     <div class="header"> 
-      <span>Cadastro de Funcionários</span> 
+      <span>Cadastro de Escaladores</span> 
 
     <div class="buttons">
       <button onclick="openModal()" id="new">Incluir</button>
@@ -28,8 +29,8 @@ rel='stylesheet'>
         <thead> 
           <tr> 
             <th>Nome</th> 
-            <th>Função</th> 
-            <th>Salário</th> 
+            <th>Idade</th> 
+            <th>Degraus Escalados</th> 
             <th class="acao">Editar</th> 
             <th class="acao">Excluir</th> 
           </tr> 
@@ -45,10 +46,10 @@ rel='stylesheet'>
           <label for="m-nome">Nome</label> 
           <input id="m-nome" type="text" required /> 
    
-          <label for="m-funcao">Função</label> 
+          <label for="m-funcao">Idade</label> 
           <input id="m-funcao" type="text" required /> 
    
-          <label for="m-salario">Salário</label> 
+          <label for="m-salario">Degraus Escalados</label> 
           <input id="m-salario" type="number" required /> 
           <button id="btnSalvar">Salvar</button> 
         </form> 
