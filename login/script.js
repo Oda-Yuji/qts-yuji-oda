@@ -1,24 +1,24 @@
+if (!localStorage.getItem('usuarioLogado')) {
+    window.location.href = 'index.html';
+}
+
 const modal = document.querySelector('.modal-container');
 const tbody = document.querySelector('tbody');
-
 const sNome = document.querySelector('#m-nome');
 const sFuncao = document.querySelector('#m-funcao');
 const sSalario = document.querySelector('#m-salario');
-
 const btnSalvar = document.querySelector('#btnSalvar');
 
-const API_BASE = 'http://localhost:3000/api/funcionarios';
-
 let itens = [];
-let id;
+let id = undefined;
 
 function openModal(edit = false, index = 0) {
-
   modal.classList.add('active');
 
   modal.onclick = e => {
     if (e.target.className.indexOf('modal-container') !== -1) {
       modal.classList.remove('active');
+      id = undefined;
     }
   };
 
@@ -26,9 +26,7 @@ function openModal(edit = false, index = 0) {
     sNome.value = itens[index].nome;
     sFuncao.value = itens[index].funcao;
     sSalario.value = itens[index].salario;
-
     id = index;
-
   } else {
     sNome.value = '';
     sFuncao.value = '';
@@ -40,123 +38,73 @@ function editItem(index) {
   openModal(true, index);
 }
 
-async function deleteItem(index) {
-
-  if (!itens[index]?.id) return;
-
-  try {
-
-    await fetch(`${API_BASE}/${itens[index].id}`, {
-      method: 'DELETE'
-    });
-
-    loadItens();
-
-  } catch (error) {
-    console.log(error);
-  }
+function deleteItem(index) {
+  itens.splice(index, 1);
+  setItensBD();
+  loadItens();
 }
 
 function insertItem(item, index) {
-
   let tr = document.createElement('tr');
 
   tr.innerHTML = `
-  
     <td>${item.nome}</td>
     <td>${item.funcao}</td>
     <td>R$ ${item.salario}</td>
-
     <td class="acao">
-      <button onclick="editItem(${index})">
-        <i class='bx bx-edit'></i>
-      </button>
+      <button onclick="editItem(${index})"><i class='bx bx-edit'></i></button>
     </td>
-
     <td class="acao">
-      <button onclick="deleteItem(${index})">
-        <i class='bx bx-trash'></i>
-      </button>
+      <button onclick="deleteItem(${index})"><i class='bx bx-trash'></i></button>
     </td>
   `;
 
   tbody.appendChild(tr);
 }
 
-btnSalvar.onclick = async (e) => {
-
+btnSalvar.onclick = e => {
   e.preventDefault();
 
-  if (
-    sNome.value == '' ||
-    sFuncao.value == '' ||
-    sSalario.value == ''
-  ) {
+  if (sNome.value === '' || sFuncao.value === '' || sSalario.value === '') {
+    alert('Preencha todos os campos!');
     return;
   }
 
-  try {
-
-    if (id !== undefined) {
-
-      await fetch(`${API_BASE}/${itens[id].id}`, {
-        method: 'PUT',
-
-        headers: {
-          'Content-Type': 'application/json'
-        },
-
-        body: JSON.stringify({
-          nome: sNome.value,
-          funcao: sFuncao.value,
-          salario: sSalario.value
-        })
-      });
-
-    } else {
-
-      await fetch(API_BASE, {
-        method: 'POST',
-
-        headers: {
-          'Content-Type': 'application/json'
-        },
-
-        body: JSON.stringify({
-          nome: sNome.value,
-          funcao: sFuncao.value,
-          salario: sSalario.value
-        })
-      });
-    }
-
-    modal.classList.remove('active');
-
-    loadItens();
-
-    id = undefined;
-
-  } catch (error) {
-    console.log(error);
+  if (id !== undefined) {
+    itens[id].nome = sNome.value;
+    itens[id].funcao = sFuncao.value;
+    itens[id].salario = sSalario.value;
+  } else {
+    itens.push({
+      nome: sNome.value,
+      funcao: sFuncao.value,
+      salario: sSalario.value
+    });
   }
+
+  setItensBD();
+  modal.classList.remove('active');
+  loadItens();
+  id = undefined;
 };
 
-async function getItensBD() {
-
-  const response = await fetch(API_BASE);
-
-  return await response.json();
-}
-
-async function loadItens() {
-
-  itens = await getItensBD();
-
+function loadItens() {
+  itens = getItensBD();
   tbody.innerHTML = '';
-
-  itens.forEach((item, index) => {
-    insertItem(item, index);
-  });
+  itens.forEach((item, index) => insertItem(item, index));
 }
+
+const getItensBD = () => JSON.parse(localStorage.getItem('dbfunc')) ?? [];
+const setItensBD = () => localStorage.setItem('dbfunc', JSON.stringify(itens));
 
 loadItens();
+
+document
+  .getElementById('logout')
+  .addEventListener('click', () => {
+
+    localStorage.removeItem('usuarioLogado');
+
+    window.location.href = 'index.html';
+});
+
